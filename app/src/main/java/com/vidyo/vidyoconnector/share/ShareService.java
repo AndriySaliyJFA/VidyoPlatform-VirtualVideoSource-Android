@@ -34,14 +34,18 @@ public class ShareService extends Service {
     }
 
     public static void startShareService(Activity activity, ServiceConnection connection) {
+        Logger.i("startShareService, available/total memory " + Runtime.getRuntime().freeMemory() + "/" +  Runtime.getRuntime().totalMemory());
+
         Intent startServiceIntent = new Intent(activity, ShareService.class);
 
         ContextCompat.startForegroundService(activity, startServiceIntent);
 
-        activity.bindService(startServiceIntent, connection, BIND_AUTO_CREATE);
+        activity.bindService(startServiceIntent, connection, BIND_IMPORTANT);
+        Logger.i("service started");
     }
 
     public static void releaseShareService(Activity activity) {
+        Logger.i("releaseShareService, available/total memory " + Runtime.getRuntime().freeMemory() + "/" +  Runtime.getRuntime().totalMemory());
         Intent serviceIntent = new Intent(activity, ShareService.class);
         serviceIntent.setAction(SHARE_RELEASE_ACTION);
         activity.startService(serviceIntent);
@@ -129,7 +133,7 @@ public class ShareService extends Service {
 
     private void createChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel serviceChannel = new NotificationChannel(SHARE_CHANNEL_ID, "Share notification channel", NotificationManager.IMPORTANCE_DEFAULT);
+            NotificationChannel serviceChannel = new NotificationChannel(SHARE_CHANNEL_ID, "Share notification channel", NotificationManager.IMPORTANCE_MAX);
             serviceChannel.setSound(null, null);
             serviceChannel.enableVibration(false);
             serviceChannel.enableLights(false);
